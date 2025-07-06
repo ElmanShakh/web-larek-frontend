@@ -4,7 +4,7 @@ type categoryType = 'софт-скил' | 'другое' | 'дополнител
 
 // карточка с товаром
 
-interface IItem {
+export interface IItem {
   id: string;
   description: string;
   image: string;
@@ -15,7 +15,7 @@ interface IItem {
 
 // модель данных
 
-interface IAppState {
+export interface IAppState {
   catalog: IItem[];
   basket: string[];
   preview: string | null;
@@ -24,27 +24,38 @@ interface IAppState {
 
 // выбор способа оплаты и адреса доставки
 
-interface IOrderDetails {
-  paymentMethod: string;
-  adress: string;
+export interface IOrderForm {
+  payment: string;
+  address: string;
 }
 
 // оформление email и телефон
 
-interface IContactForm {
+export interface IContactForm {
   email: string;
   phone: string;
 }
 
 // общая информация о заказе
 
-interface IOrder extends IOrderDetails, IContactForm {
+export interface IOrder extends IOrderForm, IContactForm {
   items: string[]
 }
 
 // после оформления
 
-interface IOrderMade {
+export interface IOrderMade {
   id: string;
   total: number;
 }
+
+// информация о корзине
+
+export interface IBasketView {
+  items: HTMLElement[];
+  total: number;
+  selected: string[];
+}
+
+// тип с ошибками в заполнямых формах
+export type FormErrors = Partial<Record<keyof IOrder, string>>
