@@ -81,7 +81,9 @@ events.on('contacts:submit', () => {
         modal.render({ content: success.render({}) });
         appData.clearBasket();
       })
-    
+    .catch((err) => {
+      console.error(err);
+    })
   });
 
 // Изменилось состояние валидации формы
@@ -200,8 +202,6 @@ events.on('basket:changed', () => {
     }).filter(Boolean) as HTMLElement[];
   
     basket.total = appData.sumTotalBasketPrice();
-
-    basket.selected = appData.basket.map(item => item.id);
   });
 
 // Добавить товар в корзину и удалить его

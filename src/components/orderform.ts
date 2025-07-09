@@ -38,15 +38,8 @@
 			});
 		}
 		protected setPaymentMethod(method: 'online' | 'cash') {
-			this._btnPaymentOnline.classList.toggle(
-				'button_alt-active',
-				method === 'online'
-			);
-			this._btnPaymentCash.classList.toggle(
-				'button_alt-active',
-				method === 'cash'
-			);
-
+			this.toggleClass(this._btnPaymentOnline, 'button_alt-active', method === 'online');
+			this.toggleClass(this._btnPaymentCash, 'button_alt-active', method === 'cash');
 			this.events.emit('order.payment:change', {
 				field: 'payment',
 				value: method
