@@ -49,6 +49,8 @@ events.on<CatalogChangeEvent>('items:changed', () => {
       const card = new Item(cloneTemplate(cardCatalogTemplate), {
           onClick: () => events.emit('card:select', item)   
       });
+      const isDisabled = item.price === null;
+      card.isDisabled = isDisabled;
       return card.render({
           title: item.title,
           image: item.image,
@@ -156,8 +158,11 @@ events.on('card:select', (item: IItem) => {
 events.on('preview:changed', (item: IItem) => {
     const card = new Item(cloneTemplate(cardPreviewTemplate), {
       onClick: () => {
+
+        if (item.price === null) return; //
         const isInCart = appData.basket.some(cartItem => cartItem.id === item.id);
-  
+
+        card.isDisabled = item.price === null; //
         if (isInCart) {
           events.emit('item:delete', { id: item.id });
           card.btnTitle = 'В корзину';
@@ -167,6 +172,9 @@ events.on('preview:changed', (item: IItem) => {
         }
       }
     });
+    const isDisabled = item.price === null;
+    card.isDisabled = isDisabled;
+    card.btnDisabled = isDisabled;
   
     card.btnTitle = appData.basket.includes(item) ? 'Удалить из корзины' : 'В корзину';
   
@@ -183,26 +191,30 @@ events.on('preview:changed', (item: IItem) => {
 
 // basket change
 events.on('basket:changed', () => {
-    page.counter = appData.basket.length;
+  page.counter = appData.basket.length;
+
+  basket.items = appData.basket.map((item, index) => {
+    const itemData = appData.catalog.find(product => product.id === item.id);
+    if (!itemData) return null;
+
+    const productCard = new Item(cloneTemplate(cardBasketTemplate), {
+      onClick: () => {
+        events.emit('item:delete', item);
+      },
+    });
+
+    productCard.index = index + 1;
+
+    return productCard.render({
+      title: itemData.title,
+      price: itemData.price ?? 0,
+    });
+  }).filter(Boolean) as HTMLElement[];
+
+  basket.total = appData.sumTotalBasketPrice();
+});
+
   
-    basket.items = appData.basket.map((itemId) => {
-      const itemData = appData.catalog.find(item => item.id === itemId.id);
-      if (!itemData) return null;
-  
-      const productCard = new Item(cloneTemplate(cardBasketTemplate), {
-        onClick: () => {
-          events.emit('item:delete', itemId);
-        },
-      });
-  
-      return productCard.render({
-        title: itemData.title,
-        price: itemData.price ?? 0,
-      });
-    }).filter(Boolean) as HTMLElement[];
-  
-    basket.total = appData.sumTotalBasketPrice();
-  });
 
 // Добавить товар в корзину и удалить его
 

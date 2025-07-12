@@ -89,14 +89,22 @@ export class Item extends Component<IItem> {
       this.setText(this._btn, value)
     }
   }
-}
-
-
-
 
   
-    
-      
+  set index(value: number) {
+    if (this._id) {
+      this.setText(this._id, value.toString());
+    }
+  }
 
-   
- 
+  
+  set isDisabled(value: boolean) {
+    this.container.classList.toggle('disabled', value);
+  }
+
+  set btnDisabled(value: boolean) {
+    if (this._btn) {
+      this._btn.disabled = value;
+    }
+  }
+}
